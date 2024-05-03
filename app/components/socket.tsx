@@ -2,19 +2,20 @@
 
 import React, { useEffect, useState } from 'react';
 import { Websocket } from '../lib/websocket/socket';
-import { CloseEvent, ISocket } from '../model/websocket';
+import { ConState, ISocket } from '../model/websocket';
 
 type Url = { url: string };
 
 export default function Socket({ url }: Url): React.JSX.Element {
   const [socket, setSocket] = useState<ISocket>();
+  const [online, setOnline] = useState(false);
 
-  const closeEvent: CloseEvent = (code: number) => console.log(code);
+  const state: ConState = (connected: boolean) => setOnline(connected);
 
   const start = () => {
     try {
       if (!socket?.Alive()) {
-        socket?.Start(url, closeEvent);
+        socket?.Start(url, state);
         setSocket(socket);
       } else socket?.Stop(1000);
     } catch (err) {
@@ -23,7 +24,7 @@ export default function Socket({ url }: Url): React.JSX.Element {
   };
 
   useEffect(() => {
-    setSocket(new Websocket());
+    setSocket(new Websocket(state));
   }, []);
 
   return (
@@ -32,7 +33,7 @@ export default function Socket({ url }: Url): React.JSX.Element {
         className='border border-blue-600 rounded-md px-4 py-2 my-4'
         onClick={() => start()}
       >
-        {socket?.Alive() ? 'Disconnect' : 'Connect'}
+        {online ? 'Disconnect' : 'Connect'}
       </button>
     </div>
   );
