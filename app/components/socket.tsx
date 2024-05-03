@@ -8,17 +8,6 @@ type Url = { url: string };
 export default function Socket({ url }: Url): React.JSX.Element {
   const [socket, setSocket] = useState<Websocket>();
 
-  const cleanup = () => {
-    try {
-      console.log('clean up lose connection');
-      console.log(socket);
-
-      socket?.Stop(1000);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   const start = () => {
     try {
       if (!socket?.Alive()) {
