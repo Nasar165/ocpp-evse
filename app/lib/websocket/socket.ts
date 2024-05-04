@@ -1,8 +1,8 @@
 import {
-  CloseEvent,
   DEAD,
   ISocket,
   LIVE,
+  Reason,
 } from '@/app/lib/websocket/websocket.model';
 
 export class Socket implements ISocket {
@@ -20,7 +20,7 @@ export class Socket implements ISocket {
 
   Stop(code?: number): void {
     if (this.socket == null) throw new Error(DEAD);
-    this.socket!.close(code ?? CloseEvent.NORMAL);
+    this.socket!.close(code ?? Reason.NORMAL);
     console.info('socket closed');
   }
 

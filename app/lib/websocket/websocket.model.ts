@@ -1,7 +1,7 @@
-const CloseEvent = Object.freeze({
-  NORMAL: 1000,
-  INTERNALERROR: 1011,
-});
+enum Reason {
+  NORMAL = 1000,
+  INTERNALERROR = 1011,
+}
 
 const DEFAULT_TIMER = 3600;
 const LIVE = 'web socket client is already initialized';
@@ -26,4 +26,4 @@ interface IAlive {
 }
 
 export type { IWebSocket, ISocket, ConState };
-export { LIVE, DEAD, DEFAULT_TIMER, CloseEvent };
+export { LIVE, DEAD, DEFAULT_TIMER, Reason };

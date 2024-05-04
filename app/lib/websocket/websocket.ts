@@ -1,8 +1,8 @@
 import {
-  CloseEvent,
   ConState,
   DEFAULT_TIMER,
   IWebSocket,
+  Reason,
 } from '@/app/lib/websocket/websocket.model';
 import { Socket } from './socket';
 
@@ -10,11 +10,9 @@ let id: ReturnType<typeof setTimeout>;
 
 export class Websocket extends Socket implements IWebSocket {
   private url: string = '';
-  private stateChange: ConState;
 
-  constructor(private timer = DEFAULT_TIMER, event: ConState) {
+  constructor(private stateChange: ConState, private timer = DEFAULT_TIMER) {
     super();
-    this.stateChange = event;
   }
 
   SetTimer(time: number): void {
@@ -75,7 +73,7 @@ export class Websocket extends Socket implements IWebSocket {
   protected close(reason: CloseEvent): void {
     if (this.socket?.readyState != this.socket?.OPEN) return;
     console.info(reason);
-    this.Stop(CloseEvent.NORMAL);
+    this.Stop(Reason.NORMAL);
   }
 
   protected open(): void {
