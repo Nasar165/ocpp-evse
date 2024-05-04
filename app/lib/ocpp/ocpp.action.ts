@@ -1,11 +1,5 @@
 import { IRequest, IResponse } from './ocpp.frame';
 
-enum CallType {
-  CALL = 2,
-  CALL_RESULT = 3,
-  CALL_ERROR = 4,
-}
-
 enum Action {
   BOOT_NOTIFICATION = 'BootNotification',
   STATUS_NOTIFICATION = 'StatusNotification',
@@ -32,11 +26,4 @@ function GetResponse(): IResponse {
   throw new Error('Not implemented');
 }
 
-export {
-  CallType,
-  Action,
-  CreateResponse,
-  GetResponse,
-  CreateRequest,
-  GetRequest,
-};
+export { Action, CreateResponse, GetResponse, CreateRequest, GetRequest };

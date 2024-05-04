@@ -1,6 +1,8 @@
-import { CallType } from './ocpp.action';
-import { ErrorFrame } from './ocpp.frame';
+import { CallType, ErrorFrame, ErrorTuple } from './ocpp.frame';
 import { v4 } from 'uuid';
+
+type ErrorDescription = string;
+type ErrorDetails = unknown | Object;
 
 enum ErrorCode {
   NotImplemented = 'Requested Action is not known by receiver',
@@ -15,24 +17,35 @@ enum ErrorCode {
   GenericError = 'A generic error has occurred',
 }
 
-function CreateError(description: ErrorCode, payload: unknown): any {
-  const keyValue = Object.entries(ErrorCode).find((v) => v[1] == description);
+function CreateError(errCode: ErrorCode, details: ErrorDetails): ErrorTuple {
+  const keyValue = Object.entries(ErrorCode).find((v) => v[1] == errCode);
   let code = '';
 
   if (keyValue == null) {
-    description = ErrorCode.InternalError;
-    code = 'InternalError';
-    payload = {};
+    errCode = ErrorCode.InternalError;
+    code = 'InternalError' as ErrorCode;
+    details = {};
   } else {
     code = keyValue[0];
   }
 
-  const result = [CallType.CALL_ERROR, v4(), code, description, payload];
-  return result;
+  return [CallType.CALL_ERROR, v4(), code, errCode, details];
 }
 
-function GetError(): ErrorFrame {
-  throw new Error('Not implemented');
+function GetError(payload: ErrorTuple): ErrorFrame {
+  console.log(payload.length);
+
+  if (payload.length != 5) throw new Error(ErrorCode.ProtocolError);
+  if (payload[0] != CallType.CALL_ERROR) throw new Error('invalid Call type');
+
+  return {
+    messageTypeID: payload[0],
+    uuid: payload[1],
+    errorCode: payload[2],
+    errorDescription: payload[3],
+    errorDetails: payload[4],
+  };
 }
 
+export type { ErrorDescription, ErrorDetails };
 export { ErrorCode, CreateError, GetError };
