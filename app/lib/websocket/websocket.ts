@@ -1,23 +1,30 @@
-import { CloseEvent, ConState, DEFAULT_TIMER } from '@/app/model/websocket';
+import {
+  ConState,
+  DEFAULT_TIMER,
+  IWebSocket,
+  Reason,
+} from '@/app/lib/websocket/websocket.model';
 import { Socket } from './socket';
 
 let id: ReturnType<typeof setTimeout>;
 
-export class Websocket extends Socket {
+export class Websocket extends Socket implements IWebSocket {
   private url: string = '';
-  private timer = 0;
-  private stateChange: ConState;
 
-  constructor(event: ConState) {
+  constructor(private stateChange: ConState, private timer = DEFAULT_TIMER) {
     super();
-    this.timer = DEFAULT_TIMER;
-    this.stateChange = event;
+  }
+
+  SetTimer(time: number): void {
+    if (time < 1000) return;
+    this.timer = time;
   }
 
   Connect(url: string): void {
+    clearTimeout(id);
+    this.Start(url);
     this.stateChange(true);
     this.url = url;
-    this.Start(url);
     this.setEventListeners();
   }
 
@@ -66,7 +73,7 @@ export class Websocket extends Socket {
   protected close(reason: CloseEvent): void {
     if (this.socket?.readyState != this.socket?.OPEN) return;
     console.info(reason);
-    this.Stop(CloseEvent.NORMAL);
+    this.Stop(Reason.NORMAL);
   }
 
   protected open(): void {

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ConState, IWebSocket } from '../model/websocket';
+import { ConState, IWebSocket } from '../lib/websocket/websocket.model';
 import { Websocket } from '../lib/websocket/websocket';
 
 type Url = { state: ConState };

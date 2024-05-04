@@ -3,7 +3,7 @@
 import { SyntheticEvent, useState } from 'react';
 import Websocket from './components/socket';
 import Input from './components/input';
-import { ConState } from './model/websocket';
+import { ConState } from './lib/websocket/websocket.model';
 
 const defaultValue = 'ws://localhost:8080/ocpp/JwNpTpPxPm/CHR202305102';
 

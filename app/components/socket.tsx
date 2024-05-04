@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { CloseEvent, ConState } from '../model/websocket';
+import { Reason, ConState } from '../lib/websocket/websocket.model';
 import WebSocketHook from '../hook/socketHook';
 
 type Url = { url: string; online: boolean; state: ConState };
@@ -13,7 +13,7 @@ export default function Socket({ url, online, state }: Url): React.JSX.Element {
     try {
       if (!socket?.Alive()) {
         socket?.Connect(url, state);
-      } else socket?.Disconnect(CloseEvent.NORMAL);
+      } else socket?.Disconnect(Reason.NORMAL);
     } catch (err) {
       console.error(err);
     }
