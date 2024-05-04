@@ -1,9 +1,11 @@
 import {
   ConState,
+  DEAD,
   DEFAULT_TIMER,
   IWebSocket,
+  OnMessageEvent,
   Reason,
-} from '@/app/lib/websocket/websocket.model';
+} from '@/app/service/websocket/websocket.model';
 import { Socket } from './socket';
 
 let id: ReturnType<typeof setTimeout>;
@@ -11,8 +13,18 @@ let id: ReturnType<typeof setTimeout>;
 export class Websocket extends Socket implements IWebSocket {
   private url: string = '';
 
-  constructor(private stateChange: ConState, private timer = DEFAULT_TIMER) {
+  constructor(
+    private stateChange: ConState,
+    private onMessage: OnMessageEvent,
+    private timer = DEFAULT_TIMER
+  ) {
     super();
+  }
+
+  Write<T>(data: T): void {
+    if (!this.Alive()) throw new Error(DEAD);
+    const json = JSON.stringify(data);
+    this.socket?.send(json);
   }
 
   SetTimer(time: number): void {
@@ -23,7 +35,6 @@ export class Websocket extends Socket implements IWebSocket {
   Connect(url: string): void {
     clearTimeout(id);
     this.Start(url);
-    this.stateChange(true);
     this.url = url;
     this.setEventListeners();
   }
@@ -43,12 +54,14 @@ export class Websocket extends Socket implements IWebSocket {
     this.socket!.addEventListener('close', this.close.bind(this));
     this.socket!.addEventListener('error', this.error.bind(this));
     this.socket!.addEventListener('open', this.open.bind(this));
+    this.socket!.addEventListener('message', this.onMessage);
   }
 
   protected removeEventListeners(): void {
     this.socket!.removeEventListener('close', this.close.bind(this));
     this.socket!.removeEventListener('error', this.error.bind(this));
-    this.socket!.addEventListener('open', this.open.bind(this));
+    this.socket!.removeEventListener('open', this.open.bind(this));
+    this.socket!.removeEventListener('message', this.onMessage);
   }
 
   protected retry(): void {
@@ -77,6 +90,6 @@ export class Websocket extends Socket implements IWebSocket {
   }
 
   protected open(): void {
-    this.stateChange(true);
+    this.stateChange(true, this);
   }
 }

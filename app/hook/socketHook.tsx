@@ -1,15 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
-import { ConState, IWebSocket } from '../lib/websocket/websocket.model';
-import { Websocket } from '../lib/websocket/websocket';
+import {
+  ConState,
+  IWebSocket,
+  OnMessageEvent,
+} from '../service/websocket/websocket.model';
+import { Websocket } from '../service/websocket/websocket';
 
-type Url = { state: ConState };
+type Url = { state: ConState; onMessage: OnMessageEvent };
 
-export default function WebSocketHook({ state }: Url): [IWebSocket] {
+export default function WebSocketHook({ state, onMessage }: Url): [IWebSocket] {
   const [socket, setSocket] = useState<IWebSocket>();
-  const ref = useRef(state);
+  const stateRef = useRef(state);
+  const onMessageRef = useRef(onMessage);
 
   useEffect(() => {
-    setSocket(new Websocket(ref.current));
+    setSocket(new Websocket(stateRef.current, onMessageRef.current));
   }, []);
 
   return [socket!];

@@ -3,7 +3,7 @@ import {
   ISocket,
   LIVE,
   Reason,
-} from '@/app/lib/websocket/websocket.model';
+} from '@/app/service/websocket/websocket.model';
 
 export class Socket implements ISocket {
   protected socket?: WebSocket;
