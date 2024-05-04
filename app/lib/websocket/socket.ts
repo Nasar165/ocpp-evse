@@ -1,6 +1,7 @@
-import { DEAD, ISocket, LIVE } from '@/app/model/websocket';
-export class Websocket implements ISocket {
-  private socket?: WebSocket;
+import { CloseEvent, DEAD, ISocket, LIVE } from '@/app/model/websocket';
+
+export class Socket implements ISocket {
+  protected socket?: WebSocket;
 
   Alive(): boolean {
     return this.socket != null && this.socket.readyState == this.socket.OPEN;
@@ -8,21 +9,18 @@ export class Websocket implements ISocket {
 
   Start(url: string): void {
     if (this.Alive()) throw Error(LIVE);
-
     this.socket = new WebSocket(url, ['ocpp1.6']);
-    console.log('Websocket connection was successful');
+    console.info('Websocket connection was successful');
   }
 
   Stop(code?: number): void {
-    if (!this.Alive()) throw new Error(DEAD);
-
-    console.log('closing socket');
-    this.socket!.close(code ?? 1000);
+    if (this.socket == null) throw new Error(DEAD);
+    this.socket!.close(code ?? CloseEvent.NORMAL);
+    console.info('socket closed');
   }
 
   Send(message: string) {
     if (!this.Alive()) throw new Error(DEAD);
-
     this.socket!.send(message);
   }
 }

@@ -1,27 +1,23 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { Websocket } from '../lib/websocket/socket';
+import React from 'react';
+import { CloseEvent, ConState } from '../model/websocket';
+import WebSocketHook from '../hook/socketHook';
 
-type Url = { url: string };
+type Url = { url: string; online: boolean; state: ConState };
 
-export default function Socket({ url }: Url): React.JSX.Element {
-  const [socket, setSocket] = useState<Websocket>();
+export default function Socket({ url, online, state }: Url): React.JSX.Element {
+  const [socket] = WebSocketHook({ state: state });
 
   const start = () => {
     try {
       if (!socket?.Alive()) {
-        socket?.Start(url);
-        setSocket(socket);
-      } else socket?.Stop(1000);
+        socket?.Connect(url, state);
+      } else socket?.Disconnect(CloseEvent.NORMAL);
     } catch (err) {
       console.error(err);
     }
   };
-
-  useEffect(() => {
-    setSocket(new Websocket());
-  }, []);
 
   return (
     <div>
@@ -29,7 +25,7 @@ export default function Socket({ url }: Url): React.JSX.Element {
         className='border border-blue-600 rounded-md px-4 py-2 my-4'
         onClick={() => start()}
       >
-        {socket?.Alive() ? 'Disconnect' : 'Connect'}
+        {online ? 'Disconnect' : 'Connect'}
       </button>
     </div>
   );
