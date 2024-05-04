@@ -4,13 +4,10 @@ import React, { useEffect, useState } from 'react';
 import { Websocket } from '../lib/websocket/socket';
 import { ConState, ISocket } from '../model/websocket';
 
-type Url = { url: string };
+type Url = { url: string; online: boolean; state: ConState };
 
-export default function Socket({ url }: Url): React.JSX.Element {
+export default function Socket({ url, online, state }: Url): React.JSX.Element {
   const [socket, setSocket] = useState<ISocket>();
-  const [online, setOnline] = useState(false);
-
-  const state: ConState = (connected: boolean) => setOnline(connected);
 
   const start = () => {
     try {
