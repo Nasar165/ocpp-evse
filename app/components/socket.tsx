@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { CloseEvent, ConState } from '../model/websocket';
+import { CloseEvent, ConState } from '../lib/websocket/websocket.model';
 import WebSocketHook from '../hook/socketHook';
 
 type Url = { url: string; online: boolean; state: ConState };

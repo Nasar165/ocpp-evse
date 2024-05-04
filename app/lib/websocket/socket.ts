@@ -1,4 +1,9 @@
-import { CloseEvent, DEAD, ISocket, LIVE } from '@/app/model/websocket';
+import {
+  CloseEvent,
+  DEAD,
+  ISocket,
+  LIVE,
+} from '@/app/lib/websocket/websocket.model';
 
 export class Socket implements ISocket {
   protected socket?: WebSocket;

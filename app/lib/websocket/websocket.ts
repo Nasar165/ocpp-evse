@@ -1,4 +1,8 @@
-import { CloseEvent, ConState, DEFAULT_TIMER } from '@/app/model/websocket';
+import {
+  CloseEvent,
+  ConState,
+  DEFAULT_TIMER,
+} from '@/app/lib/websocket/websocket.model';
 import { Socket } from './socket';
 
 let id: ReturnType<typeof setTimeout>;
