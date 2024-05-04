@@ -2,26 +2,31 @@ import {
   CloseEvent,
   ConState,
   DEFAULT_TIMER,
+  IWebSocket,
 } from '@/app/lib/websocket/websocket.model';
 import { Socket } from './socket';
 
 let id: ReturnType<typeof setTimeout>;
 
-export class Websocket extends Socket {
+export class Websocket extends Socket implements IWebSocket {
   private url: string = '';
-  private timer = 0;
   private stateChange: ConState;
 
-  constructor(event: ConState) {
+  constructor(private timer = DEFAULT_TIMER, event: ConState) {
     super();
-    this.timer = DEFAULT_TIMER;
     this.stateChange = event;
   }
 
+  SetTimer(time: number): void {
+    if (time < 1000) return;
+    this.timer = time;
+  }
+
   Connect(url: string): void {
+    clearTimeout(id);
+    this.Start(url);
     this.stateChange(true);
     this.url = url;
-    this.Start(url);
     this.setEventListeners();
   }
 

@@ -8,6 +8,7 @@ const LIVE = 'web socket client is already initialized';
 const DEAD = 'web socket client is dead, open a new connection';
 
 type ConState = (connected: boolean) => void;
+type MilliSeconds = number;
 
 interface ISocket extends IAlive {
   Start(url: string, event: ConState): void;
@@ -17,6 +18,7 @@ interface ISocket extends IAlive {
 interface IWebSocket extends IAlive {
   Connect(url: string, event: ConState): void;
   Disconnect(code: number): void;
+  SetTimer(time: MilliSeconds): void;
 }
 
 interface IAlive {
