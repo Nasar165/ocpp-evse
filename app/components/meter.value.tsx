@@ -33,7 +33,7 @@ export default function MeterValue({
 
   useEffect(() => {
     console.info('start interval');
-    const id = setInterval(onClick, DEFAULT_INTERVAL - 19000);
+    const id = setInterval(onClick, DEFAULT_INTERVAL);
     return () => {
       console.info('clean up interval');
       clearInterval(id);
