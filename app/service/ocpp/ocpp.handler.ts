@@ -8,9 +8,11 @@ import {
   IRequest,
   IResponse,
 } from './ocpp.frame';
+import { StatusNotification } from './status.notificiation';
 import { FindTransaction } from './transaction/transaction.handler';
 
 type OCPPData = IRequest | IResponse | IErrorFrame;
+type ChangeState = (state: StatusNotification) => void;
 
 function getCallType(frame: BaseTuple): CallType {
   return frame[0];
@@ -40,25 +42,33 @@ function processCall(frame: IRequest) {
   console.log(frame);
 }
 
-function processReturn(w: IWriter, frame: IErrorFrame | IResponse): void {
+function processReturn(
+  w: IWriter,
+  frame: IErrorFrame | IResponse,
+  changeState: ChangeState
+): void {
   try {
     const transaction = FindTransaction(frame.uuid);
     if (frame.messageTypeID == CallType.CALL_ERROR)
       transaction.AddError(frame as IErrorFrame);
     else {
-      transaction.AddResponse(w, frame as IResponse);
+      transaction.AddResponse(w, frame as IResponse, changeState);
     }
   } catch (error) {
     console.log('Unable to process transaction');
   }
 }
 
-function handleFrame(w: IWriter, frame: BaseTuple): void {
+function handleFrame(
+  w: IWriter,
+  frame: BaseTuple,
+  changeState: ChangeState
+): void {
   const [call, result] = getFullFrame(frame);
   if (call == CallType.CALL) {
     processCall(result as IRequest);
   } else {
-    processReturn(w, result);
+    processReturn(w, result, changeState);
   }
 }
 
@@ -78,13 +88,19 @@ function handlerError(err: Error, w: IWriter): void {
   w.Write(json);
 }
 
-export function HandleOcpp(w: IWriter, json: string): void {
+export function HandleOcpp(
+  w: IWriter,
+  json: string,
+  changeState: ChangeState
+): void {
   try {
     const data: unknown = JSON.parse(json);
     if (!Array.isArray(data)) throw new Error(ErrorCode.ProtocolError);
     let frame = isValidFrame(data);
-    handleFrame(w, frame);
+    handleFrame(w, frame, changeState);
   } catch (error: unknown) {
     handlerError(error as Error, w);
   }
 }
+
+export type { ChangeState };

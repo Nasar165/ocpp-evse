@@ -1,20 +1,21 @@
 import { StatusNotification } from './status.notificiation';
 
 interface IChargingSocket {
+  State: StatusNotification;
   ChangeState(state: StatusNotification): void;
   GetState(): StatusNotification;
 }
 
 class ChargingSocket implements IChargingSocket {
+  State: StatusNotification = StatusNotification.UNAVAILABLE;
   booted = false;
-  constructor(private state: StatusNotification) {}
 
   ChangeState(state: StatusNotification): void {
-    this.state = state;
+    this.State = state;
   }
 
   GetState(): StatusNotification {
-    return this.state;
+    return this.State;
   }
 }
 

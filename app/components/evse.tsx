@@ -1,13 +1,14 @@
 'use client';
 
-import { SyntheticEvent, useRef, useState } from 'react';
+import { SyntheticEvent, useEffect, useRef, useState } from 'react';
 import Input from './input';
 import { ConState, IWriter } from '../service/websocket/websocket.model';
 import WebSocket from './WebSocket';
 import { ChargingSocket, IChargingSocket } from '../service/ocpp/connector';
-import { StatusNotification } from '../service/ocpp/status.notificiation';
 import { HandleOcpp } from '../service/ocpp/ocpp.handler';
 import { SendBootNotification } from '../service/ocpp/command/boot-notification/bootnotification';
+import StatusNotificationUI from './status.notification';
+import { StatusNotification } from '../service/ocpp/status.notificiation';
 
 const defaultValue = 'ws://localhost:8080/ocpp/JwNpTpPxPm/CHR202305102';
 
@@ -15,14 +16,9 @@ export default function Evse() {
   const [url, setUrl] = useState(defaultValue);
   const [online, setOnline] = useState(false);
   const writer = useRef<Array<IWriter>>([]);
-
-  const chargingSocket = useRef<IChargingSocket>(
-    new ChargingSocket(StatusNotification.UNAVAILABLE)
-  );
+  const [socket, setSocket] = useState<IChargingSocket>(new ChargingSocket());
 
   const onlineChange: ConState = (connected: boolean, w?: IWriter) => {
-    console.log(chargingSocket);
-
     setOnline(connected);
     if (w != null) {
       writer.current.push(w);
@@ -36,7 +32,14 @@ export default function Evse() {
 
   const onMessage = (ev: MessageEvent) => {
     if (writer == null) return;
-    HandleOcpp(writer.current[0], ev.data);
+    console.log(socket);
+
+    HandleOcpp(writer.current[0], ev.data, changeState);
+  };
+
+  const changeState = (state: StatusNotification) => {
+    socket.ChangeState(state);
+    setSocket({ ...socket, State: state });
   };
 
   return (
@@ -48,6 +51,7 @@ export default function Evse() {
         onMessage={onMessage}
         online={online}
       />
+      <StatusNotificationUI state={socket.State} />
     </div>
   );
 }

@@ -9,6 +9,9 @@ import {
 } from './bootnotification.model';
 import { CreateError, ErrorCode } from '../../ocpp.error';
 import Validate from '@/app/helper/validation.helper';
+import { IChargingSocket } from '../../connector';
+import { StatusNotification } from '../../status.notificiation';
+import { ChangeState } from '../../ocpp.handler';
 
 const defaultValue: IBootNotification = {
   chargePointVendor: 'EW',
@@ -47,7 +50,11 @@ function SendBootNotification(w: IWriter): void {
   }
 }
 
-function BootNotification(w: IWriter, frame: IResponse): void {
+function BootNotification(
+  w: IWriter,
+  frame: IResponse,
+  changeState: ChangeState
+): void {
   clearTimeout(id);
   const [result, validation] = Validate<BootNotificationRes>(
     BootNotificationRes,
@@ -74,7 +81,7 @@ function BootNotification(w: IWriter, frame: IResponse): void {
   if (result.status == Status.REJECTED) {
     return retry(w);
   }
-
+  changeState(StatusNotification.Available);
   success = true;
 }
 
