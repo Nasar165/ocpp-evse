@@ -7,25 +7,26 @@ import WebSocket from './WebSocket';
 import { ChargingSocket, IChargingSocket } from '../service/ocpp/connector';
 import { StatusNotification } from '../service/ocpp/status.notificiation';
 import { HandleOcpp } from '../service/ocpp/ocpp.handler';
+import { SendBootNotification } from '../service/ocpp/command/boot-notification/bootnotification';
 
 const defaultValue = 'ws://localhost:8080/ocpp/JwNpTpPxPm/CHR202305102';
 
 export default function Evse() {
   const [url, setUrl] = useState(defaultValue);
   const [online, setOnline] = useState(false);
-  const writer = useRef<IWriter[]>([]);
+  const writer = useRef<Array<IWriter>>([]);
 
   const chargingSocket = useRef<IChargingSocket>(
     new ChargingSocket(StatusNotification.UNAVAILABLE)
   );
 
   const onlineChange: ConState = (connected: boolean, w?: IWriter) => {
+    console.log(chargingSocket);
+
     setOnline(connected);
     if (w != null) {
       writer.current.push(w);
-      // send BootNotification once during Boot up
-      w?.Write('hello');
-      console.log(chargingSocket);
+      SendBootNotification(w);
     }
   };
 

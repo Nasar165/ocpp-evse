@@ -6,6 +6,7 @@ interface IChargingSocket {
 }
 
 class ChargingSocket implements IChargingSocket {
+  booted = false;
   constructor(private state: StatusNotification) {}
 
   ChangeState(state: StatusNotification): void {

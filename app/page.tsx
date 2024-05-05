@@ -1,5 +1,3 @@
-'use client';
-
 import Evse from './components/evse';
 
 export default function Home() {

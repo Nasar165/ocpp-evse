@@ -4,25 +4,27 @@ import { CreateError, ErrorCode, GetError } from './ocpp.error';
 import {
   BaseTuple,
   CallType,
-  ErrorFrame,
+  IErrorFrame,
   IRequest,
   IResponse,
 } from './ocpp.frame';
+import { FindTransaction } from './transaction/transaction.handler';
 
-type OCPPData = IRequest | IResponse | ErrorFrame;
+type OCPPData = IRequest | IResponse | IErrorFrame;
 
 function getCallType(frame: BaseTuple): CallType {
   return frame[0];
 }
 
-function getFullFrame(frame: BaseTuple): OCPPData {
+function getFullFrame(frame: BaseTuple): [CallType, OCPPData] {
   let data: OCPPData;
-  switch (getCallType(frame)) {
+  const callType = getCallType(frame);
+  switch (callType) {
     case CallType.CALL:
-      data = GetRequestFrame();
+      data = GetRequestFrame(frame);
       break;
     case CallType.CALL_RESULT:
-      data = GetResponseFrame();
+      data = GetResponseFrame(frame);
       break;
     case CallType.CALL_ERROR:
       data = GetError(frame);
@@ -30,10 +32,37 @@ function getFullFrame(frame: BaseTuple): OCPPData {
     default:
       throw new Error(ErrorCode.ProtocolError);
   }
-  return data;
+
+  return [callType, data];
 }
 
-function isValidFrame(frame: unknown[]): BaseTuple {
+function processCall(frame: IRequest) {
+  console.log(frame);
+}
+
+function processReturn(w: IWriter, frame: IErrorFrame | IResponse): void {
+  try {
+    const transaction = FindTransaction(frame.uuid);
+    if (frame.messageTypeID == CallType.CALL_ERROR)
+      transaction.AddError(frame as IErrorFrame);
+    else {
+      transaction.AddResponse(w, frame as IResponse);
+    }
+  } catch (error) {
+    console.log('Unable to process transaction');
+  }
+}
+
+function handleFrame(w: IWriter, frame: BaseTuple): void {
+  const [call, result] = getFullFrame(frame);
+  if (call == CallType.CALL) {
+    processCall(result as IRequest);
+  } else {
+    processReturn(w, result);
+  }
+}
+
+function isValidFrame(frame: Array<unknown>): BaseTuple {
   const len = frame.length;
   if (len < 3 || len > 5) throw new Error(ErrorCode.ProtocolError);
 
@@ -44,7 +73,7 @@ function isValidFrame(frame: unknown[]): BaseTuple {
   return frame as BaseTuple;
 }
 
-function HandlerError(err: Error, w: IWriter): void {
+function handlerError(err: Error, w: IWriter): void {
   const json = JSON.stringify(CreateError(err.message as ErrorCode, err));
   w.Write(json);
 }
@@ -54,9 +83,8 @@ export function HandleOcpp(w: IWriter, json: string): void {
     const data: unknown = JSON.parse(json);
     if (!Array.isArray(data)) throw new Error(ErrorCode.ProtocolError);
     let frame = isValidFrame(data);
-    const request = getFullFrame(frame);
-    console.info(request);
+    handleFrame(w, frame);
   } catch (error: unknown) {
-    HandlerError(error as Error, w);
+    handlerError(error as Error, w);
   }
 }
