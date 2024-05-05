@@ -48,7 +48,7 @@ export default function Evse() {
     if (writer.current[0] == null) return;
     SendStatusNotification(
       writer.current[0],
-      0,
+      connectorId,
       error ?? ChargePointErrorCodes.NoError,
       state
     );
