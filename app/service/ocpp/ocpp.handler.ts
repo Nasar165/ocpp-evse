@@ -22,7 +22,7 @@ function getFullFrame(frame: BaseTuple): OCPPData {
       data = GetRequestFrame();
       break;
     case CallType.CALL_RESULT:
-      data = GetResponseFrame();
+      data = GetResponseFrame(frame);
       break;
     case CallType.CALL_ERROR:
       data = GetError(frame);
