@@ -26,7 +26,7 @@ interface IPayload {
   payload: Payload;
 }
 
-interface ErrorFrame extends IFrame {
+interface IErrorFrame extends IFrame {
   errorCode: ErrorCode;
   errorDescription: ErrorDescription;
   errorDetails: unknown;
@@ -40,7 +40,7 @@ interface IFrame {
 export type {
   IRequest,
   IResponse,
-  ErrorFrame,
+  IErrorFrame,
   Action,
   BaseTuple,
   UniqueID,

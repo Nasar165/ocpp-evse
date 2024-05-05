@@ -4,25 +4,26 @@ import { CreateError, ErrorCode, GetError } from './ocpp.error';
 import {
   BaseTuple,
   CallType,
-  ErrorFrame,
+  IErrorFrame,
   IRequest,
   IResponse,
 } from './ocpp.frame';
 
-type OCPPData = IRequest | IResponse | ErrorFrame;
+type OCPPData = IRequest | IResponse | IErrorFrame;
 
 function getCallType(frame: BaseTuple): CallType {
   return frame[0];
 }
 
-function getFullFrame(frame: BaseTuple): OCPPData {
+function getFullFrame(frame: BaseTuple): [CallType, OCPPData] {
   let data: OCPPData;
-  switch (getCallType(frame)) {
+  const callType = getCallType(frame);
+  switch (callType) {
     case CallType.CALL:
       data = GetRequestFrame();
       break;
     case CallType.CALL_RESULT:
-      data = GetResponseFrame();
+      data = GetResponseFrame(frame);
       break;
     case CallType.CALL_ERROR:
       data = GetError(frame);
@@ -30,7 +31,25 @@ function getFullFrame(frame: BaseTuple): OCPPData {
     default:
       throw new Error(ErrorCode.ProtocolError);
   }
-  return data;
+
+  return [callType, data];
+}
+
+function processCall(frame: IRequest) {}
+
+function processReturn(frame: IResponse) {}
+
+function processError(frame: IErrorFrame) {}
+
+function handleFrame(frame: BaseTuple): void {
+  const [call, result] = getFullFrame(frame);
+  if (call) {
+    processCall(result as IRequest);
+  } else if (call == CallType.CALL_RESULT) {
+    processReturn(result as IResponse);
+  } else {
+    processError(result as IErrorFrame);
+  }
 }
 
 function isValidFrame(frame: unknown[]): BaseTuple {
@@ -44,7 +63,7 @@ function isValidFrame(frame: unknown[]): BaseTuple {
   return frame as BaseTuple;
 }
 
-function HandlerError(err: Error, w: IWriter): void {
+function handlerError(err: Error, w: IWriter): void {
   const json = JSON.stringify(CreateError(err.message as ErrorCode, err));
   w.Write(json);
 }
@@ -54,9 +73,8 @@ export function HandleOcpp(w: IWriter, json: string): void {
     const data: unknown = JSON.parse(json);
     if (!Array.isArray(data)) throw new Error(ErrorCode.ProtocolError);
     let frame = isValidFrame(data);
-    const request = getFullFrame(frame);
-    console.info(request);
+    handleFrame(frame);
   } catch (error: unknown) {
-    HandlerError(error as Error, w);
+    handlerError(error as Error, w);
   }
 }
