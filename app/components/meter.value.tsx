@@ -6,7 +6,7 @@ import Button from './button';
 import { SendMeterValue } from '../service/ocpp/command/meter-value/meter.value';
 import { IWriter } from '../service/websocket/websocket.model';
 
-const DEFAULT_INTERVAL = 30000;
+const DEFAULT_INTERVAL = 20000;
 
 let id: ReturnType<typeof setInterval>;
 
@@ -44,6 +44,7 @@ export default function MeterValue({
   return (
     <div className='border border-black p-2 my-2 rounded-md'>
       <p className='my-2'>Meter value</p>
+      <p className='text-xs'>Notes: Meter Values are sent every 20 seconds</p>
       <Select
         items={meterValueList}
         onChange={onSelectChange}
