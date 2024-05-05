@@ -8,8 +8,6 @@ import { IWriter } from '../service/websocket/websocket.model';
 
 const DEFAULT_INTERVAL = 20000;
 
-let id: ReturnType<typeof setInterval>;
-
 type meterValue = {
   w: IWriter;
   connectorId: number;
@@ -21,20 +19,21 @@ export default function MeterValue({
   connectorId,
   state,
 }: meterValue): React.JSX.Element {
-  const [meter, setMeter] = useState(250);
-  const meterValue = { name: meter.toString(), value: meter };
+  const [meter, setMeter] = useState<Array<number>>([250]);
+  const meterValue = { name: meter.toString(), value: meter[0] };
 
   const onSelectChange = (item: ReturnValue) => {
-    setMeter(item as number);
+    meter[0] = item as number;
+    setMeter([...meter]);
   };
 
   const onClick = () => {
-    SendMeterValue(w, connectorId, meter);
+    SendMeterValue(w, connectorId, meter[0]);
   };
 
   useEffect(() => {
     console.info('start interval');
-    setInterval(onClick, DEFAULT_INTERVAL);
+    const id = setInterval(onClick, DEFAULT_INTERVAL - 19000);
     return () => {
       console.info('clean up interval');
       clearInterval(id);

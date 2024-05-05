@@ -17,7 +17,7 @@ function SendMeterValue(w: IWriter, connectorId: number, value: number): void {
     ],
   };
 
-  if (session.transactionId != 0)
+  if (session != null && session.transactionId != 0)
     payload['transactionId'] = session.transactionId;
 
   const frame = CreateRequestFrame(Action.METER_VALUES, payload);
