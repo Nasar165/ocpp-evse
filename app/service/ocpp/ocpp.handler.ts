@@ -8,6 +8,10 @@ import {
   IRequest,
   IResponse,
 } from './ocpp.frame';
+import {
+  FindTransaction,
+  GetTransactions,
+} from './transaction/transaction.handler';
 
 type OCPPData = IRequest | IResponse | IErrorFrame;
 
@@ -20,7 +24,7 @@ function getFullFrame(frame: BaseTuple): [CallType, OCPPData] {
   const callType = getCallType(frame);
   switch (callType) {
     case CallType.CALL:
-      data = GetRequestFrame();
+      data = GetRequestFrame(frame);
       break;
     case CallType.CALL_RESULT:
       data = GetResponseFrame(frame);
@@ -37,22 +41,27 @@ function getFullFrame(frame: BaseTuple): [CallType, OCPPData] {
 
 function processCall(frame: IRequest) {}
 
-function processReturn(frame: IResponse) {}
-
-function processError(frame: IErrorFrame) {}
-
-function handleFrame(frame: BaseTuple): void {
-  const [call, result] = getFullFrame(frame);
-  if (call) {
-    processCall(result as IRequest);
-  } else if (call == CallType.CALL_RESULT) {
-    processReturn(result as IResponse);
-  } else {
-    processError(result as IErrorFrame);
+function processReturn(frame: IErrorFrame | IResponse): void {
+  try {
+    const transaction = FindTransaction(frame.uuid);
+    if (frame.messageTypeID == CallType.CALL_ERROR)
+      transaction.AddError(frame as IErrorFrame);
+    else transaction.AddResponse(frame as IResponse);
+  } catch (error) {
+    console.log('Unable to process transaction');
   }
 }
 
-function isValidFrame(frame: unknown[]): BaseTuple {
+function handleFrame(frame: BaseTuple): void {
+  const [call, result] = getFullFrame(frame);
+  if (call == CallType.CALL) {
+    processCall(result as IRequest);
+  } else {
+    processReturn(result);
+  }
+}
+
+function isValidFrame(frame: Array<unknown>): BaseTuple {
   const len = frame.length;
   if (len < 3 || len > 5) throw new Error(ErrorCode.ProtocolError);
 

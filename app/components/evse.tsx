@@ -14,7 +14,7 @@ const defaultValue = 'ws://localhost:8080/ocpp/JwNpTpPxPm/CHR202305102';
 export default function Evse() {
   const [url, setUrl] = useState(defaultValue);
   const [online, setOnline] = useState(false);
-  const writer = useRef<IWriter[]>([]);
+  const writer = useRef<Array<IWriter>>([]);
 
   const chargingSocket = useRef<IChargingSocket>(
     new ChargingSocket(StatusNotification.UNAVAILABLE)
