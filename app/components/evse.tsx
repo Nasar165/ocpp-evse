@@ -21,6 +21,8 @@ export default function Evse() {
   );
 
   const onlineChange: ConState = (connected: boolean, w?: IWriter) => {
+    console.log(chargingSocket);
+
     setOnline(connected);
     if (w != null) {
       writer.current.push(w);
