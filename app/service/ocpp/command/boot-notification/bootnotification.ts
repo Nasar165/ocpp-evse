@@ -1,10 +1,7 @@
 import { IWriter } from '../../../websocket/websocket.model';
-import {
-  Action,
-  CreateRequestFrame,
-  GetResponseFrame,
-} from '../../ocpp.action';
-import { ResponseTuple } from '../../ocpp.frame';
+import { Action, CreateRequestFrame, GetRequestFrame } from '../../ocpp.action';
+import { IResponse } from '../../ocpp.frame';
+import { NewTransaction } from '../../transaction/transaction.handler';
 import { IBootNotification } from './bootnotification.model';
 
 const defaultValue: IBootNotification = {
@@ -32,13 +29,13 @@ function retry(writer: IWriter): void {
 function SendBootNotification(writer: IWriter): void {
   clearTimeout(id);
   const frame = CreateRequestFrame(Action.BOOT_NOTIFICATION, defaultValue);
+  NewTransaction(GetRequestFrame(frame), BootNotification);
   writer.Write(frame);
 }
 
-function BootNotification(frame: ResponseTuple): void {
+function BootNotification(frame: IResponse): void {
   clearTimeout(id);
-  const response = GetResponseFrame(frame);
-  console.log(response.payload);
+  console.log(frame.payload);
 }
 
 export { SendBootNotification, BootNotification };

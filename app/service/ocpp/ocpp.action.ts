@@ -24,8 +24,16 @@ function CreateRequestFrame<T>(action: Action, payload: T): RequestTuple {
   return [CallType.CALL, v4(), action, payload];
 }
 
-function GetRequestFrame(): IRequest {
-  throw new Error('Not implemented');
+function GetRequestFrame(payload: RequestTuple | BaseTuple): IRequest {
+  if (payload.length < 4) throw new Error(ErrorCode.FormationViolation);
+  if (payload[0] != CallType.CALL) throw new Error(ErrorCode.ProtocolError);
+
+  return {
+    messageTypeID: payload[0],
+    uuid: payload[1],
+    action: payload[2]!,
+    payload: payload[3],
+  };
 }
 
 function CreateResponseFrame<T>(uuid: UniqueID, payload: T): ResponseTuple {
