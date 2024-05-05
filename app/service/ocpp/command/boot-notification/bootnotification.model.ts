@@ -1,13 +1,4 @@
-import {
-  IsNumber,
-  IsEnum,
-  Min,
-  Max,
-  MinLength,
-  MaxLength,
-  IsOptional,
-  IsString,
-} from 'class-validator';
+import { IsNumber, IsEnum, Min, Max, IsString } from 'class-validator';
 
 enum Status {
   ACCEPTED = 'Accepted',
@@ -32,51 +23,6 @@ interface IBootNotificationRes {
   status: Status;
 }
 
-class BootNotification implements IBootNotification {
-  @MinLength(1)
-  @MaxLength(20)
-  chargePointVendor = '';
-
-  @MinLength(1)
-  @MaxLength(20)
-  chargePointModel = '';
-
-  @MinLength(1)
-  @MaxLength(25)
-  @IsOptional()
-  chargeBoxSerialNumber = '';
-
-  @MinLength(1)
-  @MaxLength(25)
-  @IsOptional()
-  chargePointSerialNumber = '';
-
-  @MinLength(1)
-  @MaxLength(50)
-  @IsOptional()
-  firmwareVersion = '';
-
-  @MinLength(1)
-  @MaxLength(20)
-  @IsOptional()
-  iccid = '';
-
-  @MinLength(1)
-  @MaxLength(20)
-  @IsOptional()
-  imsi = '';
-
-  @MinLength(1)
-  @MaxLength(25)
-  @IsOptional()
-  meterSerialNumber = '';
-
-  @MinLength(1)
-  @MaxLength(25)
-  @IsOptional()
-  meterType = '';
-}
-
 class BootNotificationRes implements IBootNotificationRes {
   @IsString()
   currentTime: Date = new Date();
@@ -91,4 +37,4 @@ class BootNotificationRes implements IBootNotificationRes {
 }
 
 export type { IBootNotification };
-export { Status, BootNotification, BootNotificationRes };
+export { Status, BootNotificationRes };

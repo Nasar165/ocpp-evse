@@ -1,5 +1,5 @@
 enum StatusNotification {
-  Available = 'Available',
+  AVAILABLE = 'Available',
   PREPARING = 'Preparing',
   CHARGING = 'Charging',
   SUSPENDED_EVSE = 'SuspendedEVSE',

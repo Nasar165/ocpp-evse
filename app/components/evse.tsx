@@ -38,7 +38,6 @@ export default function Evse() {
   };
 
   const changeState = (state: StatusNotification) => {
-    socket.ChangeState(state);
     setSocket({ ...socket, State: state });
   };
 
@@ -51,7 +50,7 @@ export default function Evse() {
         onMessage={onMessage}
         online={online}
       />
-      <StatusNotificationUI state={socket.State} />
+      <StatusNotificationUI state={socket.State} changeState={changeState} />
     </div>
   );
 }

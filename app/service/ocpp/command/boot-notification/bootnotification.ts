@@ -9,7 +9,6 @@ import {
 } from './bootnotification.model';
 import { CreateError, ErrorCode } from '../../ocpp.error';
 import Validate from '@/app/helper/validation.helper';
-import { IChargingSocket } from '../../connector';
 import { StatusNotification } from '../../status.notificiation';
 import { ChangeState } from '../../ocpp.handler';
 
@@ -81,7 +80,7 @@ function BootNotification(
   if (result.status == Status.REJECTED) {
     return retry(w);
   }
-  changeState(StatusNotification.Available);
+  changeState(StatusNotification.AVAILABLE);
   success = true;
 }
 
