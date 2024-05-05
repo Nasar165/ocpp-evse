@@ -30,14 +30,14 @@ function SendStartTransaction(
   const frame = CreateRequestFrame(Action.START_TRANSACTION, transaction);
   w.Write(frame);
   CreateTransaction(GetRequestFrame(frame), StartTransaction);
-  session = { connectorId, idTag, transactionId: -1 };
+  session = { connectorId, idTag, transactionId: 0 };
 }
 
 function StartTransaction(
   w: IWriter,
   frame: IResponse,
   changeState: ChangeState
-): IChargingSession | undefined {
+): void {
   const [result, validation] = Validate<StartTransactionsRes>(
     StartTransactionsRes,
     frame.payload
@@ -54,7 +54,14 @@ function StartTransaction(
 
   changeState(StatusNotification.CHARGING);
   session.transactionId = result.transactionId;
+}
+
+function GetSession(): IChargingSession {
   return session;
 }
 
-export { SendStartTransaction, StartTransaction };
+function ResetSession(): void {
+  session = { connectorId: 0, idTag: '', transactionId: 0 };
+}
+
+export { SendStartTransaction, StartTransaction, ResetSession, GetSession };

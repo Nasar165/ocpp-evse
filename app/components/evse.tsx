@@ -79,6 +79,7 @@ export default function Evse() {
           writer={writer.current[0]}
           connectorId={0}
           state={socket.State}
+          changeState={changeState}
         />
       </div>
     </div>

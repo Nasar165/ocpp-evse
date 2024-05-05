@@ -53,7 +53,7 @@ export default function Select({
   }, [defaultItem]);
 
   return (
-    <div>
+    <div className='px-4'>
       <div className='relative mt-2'>
         <button
           onClick={onDrop}
