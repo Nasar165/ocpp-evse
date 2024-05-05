@@ -1,13 +1,27 @@
 'use client';
 
 import React from 'react';
-import { Reason, ConState } from '../lib/websocket/websocket.model';
+import {
+  Reason,
+  ConState,
+  OnMessageEvent,
+} from '../service/websocket/websocket.model';
 import WebSocketHook from '../hook/socketHook';
 
-type Url = { url: string; online: boolean; state: ConState };
+type Url = {
+  url: string;
+  online: boolean;
+  state: ConState;
+  onMessage: OnMessageEvent;
+};
 
-export default function Socket({ url, online, state }: Url): React.JSX.Element {
-  const [socket] = WebSocketHook({ state: state });
+export default function WebSocket({
+  url,
+  online,
+  state,
+  onMessage,
+}: Url): React.JSX.Element {
+  const [socket] = WebSocketHook({ state: state, onMessage: onMessage });
 
   const start = () => {
     try {
