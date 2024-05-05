@@ -3,7 +3,7 @@
 import { SyntheticEvent, useRef, useState } from 'react';
 import Input from './input';
 import { ConState, IWriter } from '../service/websocket/websocket.model';
-import WebSocket from './WebSocket';
+import WebSocket from './web.socket';
 import { ChargingSocket, IChargingSocket } from '../service/ocpp/connector';
 import { HandleOcpp } from '../service/ocpp/ocpp.handler';
 import { SendBootNotification } from '../service/ocpp/command/boot-notification/boot.notification';
@@ -14,6 +14,7 @@ import {
 } from '../service/ocpp/command/status-notification/status.notification';
 import { SendStatusNotification } from '../service/ocpp/command/status-notification/statusnotification';
 import Transaction from './transaction';
+import MeterValue from './meter.value';
 
 const defaultValue = 'ws://localhost:8080/ocpp/JwNpTpPxPm/CHR202305102';
 const connectorId = 1;
@@ -86,6 +87,17 @@ export default function Evse() {
           connectorId={connectorId}
           state={socket[0].State}
           changeState={changeState}
+        />
+      </div>
+      <div
+        className={
+          socket[0].State == StatusNotification.CHARGING ? '' : 'hidden'
+        }
+      >
+        <MeterValue
+          state={socket[0].State}
+          w={writer.current[0]}
+          connectorId={connectorId}
         />
       </div>
     </div>

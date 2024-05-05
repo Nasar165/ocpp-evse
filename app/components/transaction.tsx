@@ -96,13 +96,13 @@ export default function Transaction({
         onChange={onChange}
         disabled={false}
       />
-      <p className='my-2'>Meter value</p>
+      <p className='my-2'>Stop Transaction Meter value</p>
       <Select
         items={meterValueList}
         onChange={onSelectChange}
         defaultItem={meterValue}
       />
-      <div className='grid gap-2 grid-cols-2'>
+      <div className='grid gap-2 grid-cols-1 md:grid-cols-2'>
         <Button
           onClick={onStart}
           text='Start Transaction'
@@ -117,3 +117,5 @@ export default function Transaction({
     </div>
   );
 }
+
+export { meterValueList };
