@@ -48,10 +48,11 @@ function getFullFrame(frame: BaseTuple): [CallType, OCPPData] {
 function processCall(
   w: IWriter,
   frame: IRequest,
-  state: StatusNotification
+  state: StatusNotification,
+  changeState: ChangeState
 ): void {
   const handler = FindAction(frame.action);
-  handler.handel(w, frame, state);
+  handler.handel(w, frame, state, changeState);
 }
 
 function processReturn(
@@ -79,7 +80,7 @@ function handleFrame(
 ): void {
   const [call, result] = getFullFrame(frame);
   if (call == CallType.CALL) {
-    processCall(w, result as IRequest, state);
+    processCall(w, result as IRequest, state, changeState);
   } else {
     processReturn(w, result, changeState);
   }
