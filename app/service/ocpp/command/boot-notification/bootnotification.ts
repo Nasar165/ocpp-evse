@@ -1,6 +1,10 @@
-import { DEFAULT_TIMER, IWriter } from '../../../websocket/websocket.model';
-import { Action, CreateRequestFrame } from '../../ocpp.action';
-import { BaseTuple, ResponseTuple } from '../../ocpp.frame';
+import { IWriter } from '../../../websocket/websocket.model';
+import {
+  Action,
+  CreateRequestFrame,
+  GetResponseFrame,
+} from '../../ocpp.action';
+import { ResponseTuple } from '../../ocpp.frame';
 import { IBootNotification } from './bootnotification.model';
 
 const defaultValue: IBootNotification = {
@@ -31,8 +35,10 @@ function SendBootNotification(writer: IWriter): void {
   writer.Write(frame);
 }
 
-function BootNotification(frame: ResponseTuple | BaseTuple): void {
+function BootNotification(frame: ResponseTuple): void {
   clearTimeout(id);
+  const response = GetResponseFrame(frame);
+  console.log(response.payload);
 }
 
 export { SendBootNotification, BootNotification };
