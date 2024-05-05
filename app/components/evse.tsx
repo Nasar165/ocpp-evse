@@ -75,10 +75,12 @@ export default function Evse() {
           onMessage={onMessage}
           online={online}
         />
-        <StatusNotificationUI
-          state={socket[0].State}
-          changeState={changeState}
-        />
+        {online ? (
+          <StatusNotificationUI
+            state={socket[0].State}
+            changeState={changeState}
+          />
+        ) : null}
       </div>
 
       <div className={online ? '' : 'hidden'}>
