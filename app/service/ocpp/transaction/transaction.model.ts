@@ -1,12 +1,17 @@
 import { IWriter } from '../../websocket/websocket.model';
 import { IErrorFrame, IRequest, IResponse } from '../ocpp.frame';
+import { ChangeState } from '../ocpp.handler';
 
-type ActionResponse = (w: IWriter, frame: IResponse) => void;
+type ActionResponse = (
+  w: IWriter,
+  frame: IResponse,
+  changeState: ChangeState
+) => void;
 
 interface ITransaction {
   GetID(): string;
   Handler: ActionResponse;
-  AddResponse(w: IWriter, frame: IResponse): void;
+  AddResponse(w: IWriter, frame: IResponse, changeState: ChangeState): void;
   GetResponse(): IResponse | undefined;
   AddError(frame: IErrorFrame): void;
   GetError(): IErrorFrame | undefined;
@@ -25,9 +30,9 @@ class Transaction implements ITransaction {
     this.error = frame;
   }
 
-  AddResponse(w: IWriter, frame: IResponse): void {
+  AddResponse(w: IWriter, frame: IResponse, changeState: ChangeState): void {
     this.response = frame;
-    this.Handler(w, frame);
+    this.Handler(w, frame, changeState);
   }
 
   GetID(): string {

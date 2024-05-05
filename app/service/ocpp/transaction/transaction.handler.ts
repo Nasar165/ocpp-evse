@@ -3,7 +3,7 @@ import { ActionResponse, ITransaction, Transaction } from './transaction.model';
 
 const List: Array<ITransaction> = [];
 
-function NewTransaction(frame: IRequest, handler: ActionResponse): void {
+function CreateTransaction(frame: IRequest, handler: ActionResponse): void {
   List.push(new Transaction(frame, handler));
 }
 
@@ -17,4 +17,4 @@ function GetTransactions(): Array<ITransaction> {
   return List;
 }
 
-export { GetTransactions, NewTransaction, FindTransaction };
+export { GetTransactions, CreateTransaction, FindTransaction };
