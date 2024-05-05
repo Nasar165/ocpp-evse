@@ -1,6 +1,5 @@
 import Validate from '@/app/helper/validation.helper';
 import { IWriter } from '../../websocket/websocket.model';
-import { BootNotificationRes } from '../command/boot-notification/boot.notification.model';
 import { Action, CreateRequestFrame, GetRequestFrame } from '../ocpp.action';
 import { CreateError, ErrorCode } from '../ocpp.error';
 import { IResponse } from '../ocpp.frame';

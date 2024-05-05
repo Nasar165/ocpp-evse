@@ -4,7 +4,6 @@ import Input from './input';
 import Button from './button';
 import { IWriter } from '../service/websocket/websocket.model';
 import { StatusNotification } from '../service/ocpp/command/status-notification/status.notification';
-import { IChargingSession } from '../service/ocpp/charging/start.transaction.model';
 
 type transaction = {
   writer: IWriter;
