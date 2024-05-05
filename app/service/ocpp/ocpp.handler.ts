@@ -11,7 +11,7 @@ import {
 import {
   ChargePointErrorCodes,
   StatusNotification,
-} from './command/status-notification/status.notificiation';
+} from './command/status-notification/status.notification';
 import { FindTransaction } from './transaction/transaction.handler';
 
 type OCPPData = IRequest | IResponse | IErrorFrame;

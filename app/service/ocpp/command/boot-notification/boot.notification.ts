@@ -6,10 +6,10 @@ import {
   BootNotificationRes,
   IBootNotification,
   Status,
-} from './bootnotification.model';
+} from './boot.notification.model';
 import { CreateError, ErrorCode } from '../../ocpp.error';
 import Validate from '@/app/helper/validation.helper';
-import { StatusNotification } from '../status-notification/status.notificiation';
+import { StatusNotification } from '../status-notification/status.notification';
 import { ChangeState } from '../../ocpp.handler';
 
 const defaultValue: IBootNotification = {
@@ -59,8 +59,6 @@ function BootNotification(
     BootNotificationRes,
     frame.payload
   );
-
-  console.log(validation);
 
   if (validation.length > 0) {
     w.Write(CreateError(ErrorCode.PropertyConstraintViolation, validation));

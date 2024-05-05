@@ -7,6 +7,7 @@ import {
   OnMessageEvent,
 } from '../service/websocket/websocket.model';
 import WebSocketHook from '../hook/socketHook';
+import Button from './button';
 
 type Url = {
   url: string;
@@ -35,12 +36,11 @@ export default function WebSocket({
 
   return (
     <div>
-      <button
-        className='border border-blue-600 rounded-md px-4 py-2 my-4'
-        onClick={() => start()}
-      >
-        {online ? 'Disconnect' : 'Connect'}
-      </button>
+      <Button
+        onClick={start}
+        text={online ? 'Disconnect' : 'Connect'}
+        disabled={false}
+      />
     </div>
   );
 }

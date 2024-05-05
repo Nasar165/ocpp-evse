@@ -6,13 +6,14 @@ import { ConState, IWriter } from '../service/websocket/websocket.model';
 import WebSocket from './WebSocket';
 import { ChargingSocket, IChargingSocket } from '../service/ocpp/connector';
 import { HandleOcpp } from '../service/ocpp/ocpp.handler';
-import { SendBootNotification } from '../service/ocpp/command/boot-notification/bootnotification';
+import { SendBootNotification } from '../service/ocpp/command/boot-notification/boot.notification';
 import StatusNotificationUI from './status.notification';
 import {
   ChargePointErrorCodes,
   StatusNotification,
-} from '../service/ocpp/command/status-notification/status.notificiation';
+} from '../service/ocpp/command/status-notification/status.notification';
 import { SendStatusNotification } from '../service/ocpp/command/status-notification/statusnotification';
+import Transaction from './transaction';
 
 const defaultValue = 'ws://localhost:8080/ocpp/JwNpTpPxPm/CHR202305102';
 
@@ -55,14 +56,31 @@ export default function Evse() {
 
   return (
     <div className='w-screen mx-auto mt-8 md:w-2/3 xl:w-1/3'>
-      <Input name='url' value={url} onChange={onChange} disabled={online} />
-      <WebSocket
-        url={url}
-        state={onlineChange}
-        onMessage={onMessage}
-        online={online}
-      />
-      <StatusNotificationUI state={socket.State} changeState={changeState} />
+      <div className='border border-black p-2 my-2 rounded-md'>
+        <Input
+          title='Websocket Url'
+          name='url'
+          placeholder='wss://'
+          value={url}
+          onChange={onChange}
+          disabled={online}
+        />
+        <WebSocket
+          url={url}
+          state={onlineChange}
+          onMessage={onMessage}
+          online={online}
+        />
+        <StatusNotificationUI state={socket.State} changeState={changeState} />
+      </div>
+
+      <div className={online ? '' : 'hidden'}>
+        <Transaction
+          writer={writer.current[0]}
+          connectorId={0}
+          state={socket.State}
+        />
+      </div>
     </div>
   );
 }
