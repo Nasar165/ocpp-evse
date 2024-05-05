@@ -2,12 +2,12 @@ import React, { SyntheticEvent, useState } from 'react';
 import {
   GetSession,
   SendStartTransaction,
-} from '../service/ocpp/charging/start.transaction';
+} from '../service/ocpp/command/charging/start.transaction';
 import Input from './input';
 import Button from './button';
 import { IWriter } from '../service/websocket/websocket.model';
 import { StatusNotification } from '../service/ocpp/command/status-notification/status.notification';
-import { SendStopTransaction } from '../service/ocpp/charging/stop.transaction';
+import { SendStopTransaction } from '../service/ocpp/command/charging/stop.transaction';
 import { ChangeState } from '../service/ocpp/ocpp.handler';
 import Select, { ReturnValue } from './select';
 
