@@ -5,7 +5,6 @@ import {
   Reason,
   ConState,
   OnMessageEvent,
-  IWriter,
 } from '../service/websocket/websocket.model';
 import WebSocketHook from '../hook/socketHook';
 
