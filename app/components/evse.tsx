@@ -77,7 +77,7 @@ export default function Evse() {
       <div className={online ? '' : 'hidden'}>
         <Transaction
           writer={writer.current[0]}
-          connectorId={0}
+          connectorId={1}
           state={socket.State}
           changeState={changeState}
         />
