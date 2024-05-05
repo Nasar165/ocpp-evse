@@ -89,17 +89,15 @@ export default function Evse() {
           changeState={changeState}
         />
       </div>
-      <div
-        className={
-          socket[0].State == StatusNotification.CHARGING ? '' : 'hidden'
-        }
-      >
-        <MeterValue
-          state={socket[0].State}
-          w={writer.current[0]}
-          connectorId={connectorId}
-        />
-      </div>
+      {socket[0].State == StatusNotification.CHARGING ? (
+        <div>
+          <MeterValue
+            state={socket[0].State}
+            w={writer.current[0]}
+            connectorId={connectorId}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }

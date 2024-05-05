@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Select, { ReturnValue } from './select';
 import { meterValueList } from './transaction';
 import { StatusNotification } from '../service/ocpp/command/status-notification/status.notification';
 import Button from './button';
 import { SendMeterValue } from '../service/ocpp/command/meter-value/meter.value';
 import { IWriter } from '../service/websocket/websocket.model';
+
+const DEFAULT_INTERVAL = 30000;
+
+let id: ReturnType<typeof setInterval>;
 
 type meterValue = {
   w: IWriter;
@@ -28,6 +32,15 @@ export default function MeterValue({
     SendMeterValue(w, connectorId, meter);
   };
 
+  useEffect(() => {
+    console.info('start interval');
+    setInterval(onClick, DEFAULT_INTERVAL);
+    return () => {
+      console.info('clean up interval');
+      clearInterval(id);
+    };
+  }, []);
+
   return (
     <div className='border border-black p-2 my-2 rounded-md'>
       <p className='my-2'>Meter value</p>
@@ -38,7 +51,7 @@ export default function MeterValue({
       />
       <Button
         onClick={onClick}
-        text='Stop Transaction'
+        text='Send Meter Values'
         disabled={state != StatusNotification.CHARGING}
       />
     </div>
