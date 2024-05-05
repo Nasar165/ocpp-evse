@@ -5,7 +5,10 @@ type Action = string;
 type UniqueID = string;
 type Payload = unknown;
 
-type ErrorTuple = [CallType, UniqueID, ErrorCode, ErrorDescription, unknown];
+type BaseTuple = [CallType, UniqueID];
+type RequestTuple = [...BaseTuple, Action, Payload];
+type ResponseTuple = [...BaseTuple, Payload];
+type ErrorTuple = [...BaseTuple, ErrorCode, ErrorDescription, unknown];
 
 enum CallType {
   CALL = 2,
@@ -34,5 +37,15 @@ interface IFrame {
   uuid: UniqueID;
 }
 
-export type { IRequest, IResponse, ErrorFrame, Action, UniqueID, ErrorTuple };
+export type {
+  IRequest,
+  IResponse,
+  ErrorFrame,
+  Action,
+  BaseTuple,
+  UniqueID,
+  ErrorTuple,
+  RequestTuple,
+  ResponseTuple,
+};
 export { CallType };

@@ -1,4 +1,4 @@
-import { CallType, ErrorFrame, ErrorTuple } from './ocpp.frame';
+import { BaseTuple, CallType, ErrorFrame, ErrorTuple } from './ocpp.frame';
 import { v4 } from 'uuid';
 
 type ErrorDescription = string;
@@ -32,11 +32,10 @@ function CreateError(errCode: ErrorCode, details: ErrorDetails): ErrorTuple {
   return [CallType.CALL_ERROR, v4(), code, errCode, details];
 }
 
-function GetError(payload: ErrorTuple): ErrorFrame {
-  console.log(payload.length);
-
-  if (payload.length != 5) throw new Error(ErrorCode.ProtocolError);
-  if (payload[0] != CallType.CALL_ERROR) throw new Error('invalid Call type');
+function GetError(payload: ErrorTuple | BaseTuple): ErrorFrame {
+  if (payload.length != 5) throw new Error(ErrorCode.FormationViolation);
+  if (payload[0] != CallType.CALL_ERROR)
+    throw new Error(ErrorCode.FormationViolation);
 
   return {
     messageTypeID: payload[0],

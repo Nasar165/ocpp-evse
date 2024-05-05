@@ -10,20 +10,26 @@ enum Action {
   REMOTE_STOP_TRANSACTION = 'RemoteStopTransaction',
 }
 
-function CreateRequest(): void {
+function CreateRequestFrame(): void {
   throw new Error('Not implemented');
 }
 
-function GetRequest(): IRequest {
+function GetRequestFrame(): IRequest {
   throw new Error('Not implemented');
 }
 
-function CreateResponse(): void {
+function CreateResponseFrame(): void {
   throw new Error('Not implemented');
 }
 
-function GetResponse(): IResponse {
+function GetResponseFrame(): IResponse {
   throw new Error('Not implemented');
 }
 
-export { Action, CreateResponse, GetResponse, CreateRequest, GetRequest };
+export {
+  Action,
+  CreateResponseFrame,
+  GetResponseFrame,
+  CreateRequestFrame,
+  GetRequestFrame,
+};
