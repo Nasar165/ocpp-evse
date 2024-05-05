@@ -36,7 +36,9 @@ function getFullFrame(frame: BaseTuple): [CallType, OCPPData] {
   return [callType, data];
 }
 
-function processCall(frame: IRequest) {}
+function processCall(frame: IRequest) {
+  console.log(frame);
+}
 
 function processReturn(w: IWriter, frame: IErrorFrame | IResponse): void {
   try {
