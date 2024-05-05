@@ -1,17 +1,17 @@
 import Validate from '@/app/helper/validation.helper';
-import { IWriter } from '../../websocket/websocket.model';
-import { Action, CreateRequestFrame, GetRequestFrame } from '../ocpp.action';
-import { CreateError, ErrorCode } from '../ocpp.error';
-import { IResponse } from '../ocpp.frame';
-import { ChangeState } from '../ocpp.handler';
-import { CreateTransaction } from '../transaction/transaction.handler';
+import { IWriter } from '../../../websocket/websocket.model';
+import { Action, CreateRequestFrame, GetRequestFrame } from '../../ocpp.action';
+import { CreateError, ErrorCode } from '../../ocpp.error';
+import { IResponse } from '../../ocpp.frame';
+import { ChangeState } from '../../ocpp.handler';
+import { CreateTransaction } from '../../transaction/transaction.handler';
 import {
   AuthorizationStatus,
   IChargingSession,
   IStartTransaction,
   StartTransactionsRes,
 } from './start.transaction.model';
-import { StatusNotification } from '../command/status-notification/status.notification';
+import { StatusNotification } from '../status-notification/status.notification';
 
 let session: IChargingSession;
 

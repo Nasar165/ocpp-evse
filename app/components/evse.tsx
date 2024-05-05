@@ -1,6 +1,6 @@
 'use client';
 
-import { SyntheticEvent, useRef, useState } from 'react';
+import { SyntheticEvent, useEffect, useRef, useState } from 'react';
 import Input from './input';
 import { ConState, IWriter } from '../service/websocket/websocket.model';
 import WebSocket from './WebSocket';
@@ -21,7 +21,9 @@ export default function Evse() {
   const [url, setUrl] = useState(defaultValue);
   const [online, setOnline] = useState(false);
   const writer = useRef<Array<IWriter>>([]);
-  const [socket, setSocket] = useState<IChargingSocket>(new ChargingSocket());
+  const [socket, setSocket] = useState<Array<IChargingSocket>>([
+    new ChargingSocket(),
+  ]);
 
   const onlineChange: ConState = (connected: boolean, w?: IWriter) => {
     setOnline(connected);
@@ -35,16 +37,17 @@ export default function Evse() {
     setUrl(event.currentTarget.value);
   };
 
-  const onMessage = (ev: MessageEvent) => {
+  const onMessage: (ev: MessageEvent) => void = (ev: MessageEvent) => {
     if (writer == null) return;
-    HandleOcpp(writer.current[0], ev.data, changeState);
+    HandleOcpp(writer.current[0], ev.data, socket[0].State, changeState);
   };
 
   const changeState = (
     state: StatusNotification,
     error?: ChargePointErrorCodes
   ) => {
-    setSocket({ ...socket, State: state });
+    socket[0].State = state;
+    setSocket([...socket]);
     if (writer.current[0] == null) return;
     SendStatusNotification(
       writer.current[0],
@@ -71,14 +74,17 @@ export default function Evse() {
           onMessage={onMessage}
           online={online}
         />
-        <StatusNotificationUI state={socket.State} changeState={changeState} />
+        <StatusNotificationUI
+          state={socket[0].State}
+          changeState={changeState}
+        />
       </div>
 
       <div className={online ? '' : 'hidden'}>
         <Transaction
           writer={writer.current[0]}
           connectorId={connectorId}
-          state={socket.State}
+          state={socket[0].State}
           changeState={changeState}
         />
       </div>

@@ -2,6 +2,7 @@ import { IWriter } from '../websocket/websocket.model';
 import { GetRequestFrame, GetResponseFrame } from './ocpp.action';
 import { CreateError, ErrorCode, GetError } from './ocpp.error';
 import {
+  Action,
   BaseTuple,
   CallType,
   IErrorFrame,
@@ -13,6 +14,7 @@ import {
   StatusNotification,
 } from './command/status-notification/status.notification';
 import { FindTransaction } from './transaction/transaction.handler';
+import { FindAction } from './ocpp.action.list';
 
 type OCPPData = IRequest | IResponse | IErrorFrame;
 type ChangeState = (
@@ -44,8 +46,13 @@ function getFullFrame(frame: BaseTuple): [CallType, OCPPData] {
   return [callType, data];
 }
 
-function processCall(frame: IRequest) {
-  console.log(frame);
+function processCall(
+  w: IWriter,
+  frame: IRequest,
+  state: StatusNotification
+): void {
+  const handler = FindAction(frame.action);
+  handler.handel(w, frame, state);
 }
 
 function processReturn(
@@ -68,11 +75,12 @@ function processReturn(
 function handleFrame(
   w: IWriter,
   frame: BaseTuple,
+  state: StatusNotification,
   changeState: ChangeState
 ): void {
   const [call, result] = getFullFrame(frame);
   if (call == CallType.CALL) {
-    processCall(result as IRequest);
+    processCall(w, result as IRequest, state);
   } else {
     processReturn(w, result, changeState);
   }
@@ -97,13 +105,14 @@ function handlerError(err: Error, w: IWriter): void {
 export function HandleOcpp(
   w: IWriter,
   json: string,
+  state: StatusNotification,
   changeState: ChangeState
 ): void {
   try {
     const data: unknown = JSON.parse(json);
     if (!Array.isArray(data)) throw new Error(ErrorCode.ProtocolError);
     let frame = isValidFrame(data);
-    handleFrame(w, frame, changeState);
+    handleFrame(w, frame, state, changeState);
   } catch (error: unknown) {
     handlerError(error as Error, w);
   }
