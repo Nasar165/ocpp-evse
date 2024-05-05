@@ -41,23 +41,25 @@ function getFullFrame(frame: BaseTuple): [CallType, OCPPData] {
 
 function processCall(frame: IRequest) {}
 
-function processReturn(frame: IErrorFrame | IResponse): void {
+function processReturn(w: IWriter, frame: IErrorFrame | IResponse): void {
   try {
     const transaction = FindTransaction(frame.uuid);
     if (frame.messageTypeID == CallType.CALL_ERROR)
       transaction.AddError(frame as IErrorFrame);
-    else transaction.AddResponse(frame as IResponse);
+    else {
+      transaction.AddResponse(w, frame as IResponse);
+    }
   } catch (error) {
     console.log('Unable to process transaction');
   }
 }
 
-function handleFrame(frame: BaseTuple): void {
+function handleFrame(w: IWriter, frame: BaseTuple): void {
   const [call, result] = getFullFrame(frame);
   if (call == CallType.CALL) {
     processCall(result as IRequest);
   } else {
-    processReturn(result);
+    processReturn(w, result);
   }
 }
 
@@ -82,7 +84,7 @@ export function HandleOcpp(w: IWriter, json: string): void {
     const data: unknown = JSON.parse(json);
     if (!Array.isArray(data)) throw new Error(ErrorCode.ProtocolError);
     let frame = isValidFrame(data);
-    handleFrame(frame);
+    handleFrame(w, frame);
   } catch (error: unknown) {
     handlerError(error as Error, w);
   }

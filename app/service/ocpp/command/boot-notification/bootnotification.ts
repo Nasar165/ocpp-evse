@@ -1,8 +1,14 @@
-import { IWriter } from '../../../websocket/websocket.model';
+import { DEFAULT_TIMER, IWriter } from '../../../websocket/websocket.model';
 import { Action, CreateRequestFrame, GetRequestFrame } from '../../ocpp.action';
 import { IResponse } from '../../ocpp.frame';
 import { NewTransaction } from '../../transaction/transaction.handler';
-import { IBootNotification } from './bootnotification.model';
+import {
+  BootNotificationRes,
+  IBootNotification,
+  Status,
+} from './bootnotification.model';
+import { CreateError, ErrorCode } from '../../ocpp.error';
+import Validate from '@/app/helper/validation.helper';
 
 const defaultValue: IBootNotification = {
   chargePointVendor: 'EW',
@@ -17,25 +23,59 @@ const defaultValue: IBootNotification = {
 };
 
 let id: ReturnType<typeof setTimeout>;
+let success = false;
 
-function retry(writer: IWriter): void {
+function retry(w: IWriter): void {
+  id = setTimeout(() => {
+    try {
+      SendBootNotification(w);
+    } catch (error) {
+      clearTimeout(id);
+    }
+  }, DEFAULT_TIMER);
+}
+
+function SendBootNotification(w: IWriter): void {
   try {
-    SendBootNotification(writer);
-  } catch (error) {
     clearTimeout(id);
+    if (success) return;
+    const frame = CreateRequestFrame(Action.BOOT_NOTIFICATION, defaultValue);
+    NewTransaction(GetRequestFrame(frame), BootNotification);
+    w.Write(frame);
+  } catch (error) {
+    retry(w);
   }
 }
 
-function SendBootNotification(writer: IWriter): void {
+function BootNotification(w: IWriter, frame: IResponse): void {
   clearTimeout(id);
-  const frame = CreateRequestFrame(Action.BOOT_NOTIFICATION, defaultValue);
-  NewTransaction(GetRequestFrame(frame), BootNotification);
-  writer.Write(frame);
-}
+  const [result, validation] = Validate<BootNotificationRes>(
+    BootNotificationRes,
+    frame.payload
+  );
 
-function BootNotification(frame: IResponse): void {
-  clearTimeout(id);
-  console.log(frame.payload);
+  console.log(validation);
+
+  if (validation.length > 0) {
+    w.Write(CreateError(ErrorCode.PropertyConstraintViolation, validation));
+    return retry(w);
+  }
+
+  if (result.status == Status.PENDING) {
+    w.Write(
+      CreateError(ErrorCode.NotSupported, {
+        err: 'Pending functionality is not supported',
+      })
+    );
+
+    return retry(w);
+  }
+
+  if (result.status == Status.REJECTED) {
+    return retry(w);
+  }
+
+  success = true;
 }
 
 export { SendBootNotification, BootNotification };

@@ -1,11 +1,12 @@
+import { IWriter } from '../../websocket/websocket.model';
 import { IErrorFrame, IRequest, IResponse } from '../ocpp.frame';
 
-type ActionResponse = (frame: IResponse) => void;
+type ActionResponse = (w: IWriter, frame: IResponse) => void;
 
 interface ITransaction {
   GetID(): string;
   Handler: ActionResponse;
-  AddResponse(frame: IResponse): void;
+  AddResponse(w: IWriter, frame: IResponse): void;
   GetResponse(): IResponse | undefined;
   AddError(frame: IErrorFrame): void;
   GetError(): IErrorFrame | undefined;
@@ -24,9 +25,9 @@ class Transaction implements ITransaction {
     this.error = frame;
   }
 
-  AddResponse(frame: IResponse): void {
+  AddResponse(w: IWriter, frame: IResponse): void {
     this.response = frame;
-    this.Handler(frame);
+    this.Handler(w, frame);
   }
 
   GetID(): string {
