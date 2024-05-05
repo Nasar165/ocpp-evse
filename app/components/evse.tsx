@@ -13,7 +13,7 @@ const defaultValue = 'ws://localhost:8080/ocpp/JwNpTpPxPm/CHR202305102';
 export default function Evse() {
   const [url, setUrl] = useState(defaultValue);
   const [online, setOnline] = useState(false);
-  const [writer, setWriter] = useState<IWriter[]>([]);
+  const writer = useRef<IWriter[]>([]);
 
   const chargingSocket = useRef<IChargingSocket>(
     new ChargingSocket(StatusNotification.UNAVAILABLE)
@@ -22,9 +22,10 @@ export default function Evse() {
   const onlineChange: ConState = (connected: boolean, w?: IWriter) => {
     setOnline(connected);
     if (w != null) {
-      writer.push(w);
+      writer.current.push(w);
       // send BootNotification once during Boot up
       w?.Write('hello');
+      console.log(chargingSocket);
     }
   };
 
@@ -34,7 +35,7 @@ export default function Evse() {
 
   const onMessage = (ev: MessageEvent) => {
     if (writer == null) return;
-    HandleOcpp(writer[0], ev.data);
+    HandleOcpp(writer.current[0], ev.data);
   };
 
   return (
