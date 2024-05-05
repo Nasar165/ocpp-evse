@@ -7,7 +7,6 @@ import {
   MaxLength,
   IsOptional,
   IsString,
-  IsDate,
 } from 'class-validator';
 
 enum Status {
