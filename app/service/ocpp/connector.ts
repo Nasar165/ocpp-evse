@@ -1,4 +1,4 @@
-import { StatusNotification } from './command/status-notification/status.notificiation';
+import { StatusNotification } from './command/status-notification/status.notification';
 
 interface IChargingSocket {
   State: StatusNotification;

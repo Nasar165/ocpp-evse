@@ -5,7 +5,7 @@ import {
   ChargePointErrorCodes,
   IStatusNotification,
   StatusNotification,
-} from './status.notificiation';
+} from './status.notification';
 
 function SendStatusNotification(
   w: IWriter,

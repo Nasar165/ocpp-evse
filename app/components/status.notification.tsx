@@ -1,5 +1,5 @@
 import React from 'react';
-import { StatusNotification } from '../service/ocpp/command/status-notification/status.notificiation';
+import { StatusNotification } from '../service/ocpp/command/status-notification/status.notification';
 import { ChangeState } from '../service/ocpp/ocpp.handler';
 import Select, { Item, ReturnValue } from './select';
 
@@ -19,8 +19,6 @@ export default function StatusNotificationUI({
 
   const onChange = (value: ReturnValue) =>
     changeState(value as StatusNotification);
-
-  console.log(state);
 
   return (
     <div>
