@@ -1,5 +1,5 @@
 import React from 'react';
-import { StatusNotification } from '../service/ocpp/status.notificiation';
+import { StatusNotification } from '../service/ocpp/command/status-notification/status.notificiation';
 import { ChangeState } from '../service/ocpp/ocpp.handler';
 import Select, { Item, ReturnValue } from './select';
 
@@ -15,18 +15,17 @@ export default function StatusNotificationUI({
   const items: Array<Item> = Object.values(StatusNotification).map((v) => {
     return { name: v, value: v };
   });
+  const defaultState = { name: state, value: state };
 
   const onChange = (value: ReturnValue) =>
     changeState(value as StatusNotification);
 
+  console.log(state);
+
   return (
     <div>
       state: {state}
-      <Select
-        items={items}
-        onChange={onChange}
-        defaultItem={{ name: state, value: state }}
-      />
+      <Select items={items} onChange={onChange} defaultItem={defaultState} />
     </div>
   );
 }

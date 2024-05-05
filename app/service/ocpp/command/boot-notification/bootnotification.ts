@@ -1,7 +1,7 @@
 import { DEFAULT_TIMER, IWriter } from '../../../websocket/websocket.model';
 import { Action, CreateRequestFrame, GetRequestFrame } from '../../ocpp.action';
 import { IResponse } from '../../ocpp.frame';
-import { NewTransaction } from '../../transaction/transaction.handler';
+import { CreateTransaction } from '../../transaction/transaction.handler';
 import {
   BootNotificationRes,
   IBootNotification,
@@ -9,7 +9,7 @@ import {
 } from './bootnotification.model';
 import { CreateError, ErrorCode } from '../../ocpp.error';
 import Validate from '@/app/helper/validation.helper';
-import { StatusNotification } from '../../status.notificiation';
+import { StatusNotification } from '../status-notification/status.notificiation';
 import { ChangeState } from '../../ocpp.handler';
 
 const defaultValue: IBootNotification = {
@@ -42,7 +42,7 @@ function SendBootNotification(w: IWriter): void {
     clearTimeout(id);
     if (success) return;
     const frame = CreateRequestFrame(Action.BOOT_NOTIFICATION, defaultValue);
-    NewTransaction(GetRequestFrame(frame), BootNotification);
+    CreateTransaction(GetRequestFrame(frame), BootNotification);
     w.Write(frame);
   } catch (error) {
     retry(w);

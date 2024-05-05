@@ -8,7 +8,11 @@ import { ChargingSocket, IChargingSocket } from '../service/ocpp/connector';
 import { HandleOcpp } from '../service/ocpp/ocpp.handler';
 import { SendBootNotification } from '../service/ocpp/command/boot-notification/bootnotification';
 import StatusNotificationUI from './status.notification';
-import { StatusNotification } from '../service/ocpp/status.notificiation';
+import {
+  ChargePointErrorCodes,
+  StatusNotification,
+} from '../service/ocpp/command/status-notification/status.notificiation';
+import { SendStatusNotification } from '../service/ocpp/command/status-notification/statusnotification';
 
 const defaultValue = 'ws://localhost:8080/ocpp/JwNpTpPxPm/CHR202305102';
 
@@ -32,13 +36,21 @@ export default function Evse() {
 
   const onMessage = (ev: MessageEvent) => {
     if (writer == null) return;
-    console.log(socket);
-
     HandleOcpp(writer.current[0], ev.data, changeState);
   };
 
-  const changeState = (state: StatusNotification) => {
+  const changeState = (
+    state: StatusNotification,
+    error?: ChargePointErrorCodes
+  ) => {
     setSocket({ ...socket, State: state });
+    if (writer.current[0] == null) return;
+    SendStatusNotification(
+      writer.current[0],
+      0,
+      error ?? ChargePointErrorCodes.NoError,
+      state
+    );
   };
 
   return (

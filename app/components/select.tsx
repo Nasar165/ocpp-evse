@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type ReturnValue = string | number;
 
@@ -34,7 +34,7 @@ export default function Select({
   defaultItem,
   onChange,
 }: Select): React.JSX.Element {
-  const [selected, setSelected] = useState(defaultItem);
+  const [selected, setSelected] = useState<Item>();
   const [drop, setDrop] = useState(false);
   const show = drop ? '' : 'hidden';
 
@@ -47,6 +47,10 @@ export default function Select({
   const onDrop = () => {
     setDrop((v) => !v);
   };
+
+  useEffect(() => {
+    setSelected(defaultItem);
+  }, [defaultItem]);
 
   return (
     <div>

@@ -8,11 +8,17 @@ import {
   IRequest,
   IResponse,
 } from './ocpp.frame';
-import { StatusNotification } from './status.notificiation';
+import {
+  ChargePointErrorCodes,
+  StatusNotification,
+} from './command/status-notification/status.notificiation';
 import { FindTransaction } from './transaction/transaction.handler';
 
 type OCPPData = IRequest | IResponse | IErrorFrame;
-type ChangeState = (state: StatusNotification) => void;
+type ChangeState = (
+  state: StatusNotification,
+  error?: ChargePointErrorCodes
+) => void;
 
 function getCallType(frame: BaseTuple): CallType {
   return frame[0];
