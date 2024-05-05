@@ -16,7 +16,7 @@ import { SendStatusNotification } from '../service/ocpp/command/status-notificat
 import Transaction from './transaction';
 
 const defaultValue = 'ws://localhost:8080/ocpp/JwNpTpPxPm/CHR202305102';
-
+const connectorId = 1;
 export default function Evse() {
   const [url, setUrl] = useState(defaultValue);
   const [online, setOnline] = useState(false);
@@ -77,7 +77,7 @@ export default function Evse() {
       <div className={online ? '' : 'hidden'}>
         <Transaction
           writer={writer.current[0]}
-          connectorId={0}
+          connectorId={connectorId}
           state={socket.State}
           changeState={changeState}
         />
