@@ -8,10 +8,7 @@ import {
   IRequest,
   IResponse,
 } from './ocpp.frame';
-import {
-  FindTransaction,
-  GetTransactions,
-} from './transaction/transaction.handler';
+import { FindTransaction } from './transaction/transaction.handler';
 
 type OCPPData = IRequest | IResponse | IErrorFrame;
 
