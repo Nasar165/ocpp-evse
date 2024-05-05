@@ -1,6 +1,6 @@
 'use client';
 
-import { SyntheticEvent, useEffect, useRef, useState } from 'react';
+import { SyntheticEvent, useRef, useState } from 'react';
 import Input from './input';
 import { ConState, IWriter } from '../service/websocket/websocket.model';
 import WebSocket from './WebSocket';

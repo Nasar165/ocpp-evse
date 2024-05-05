@@ -2,7 +2,6 @@ import { IWriter } from '../websocket/websocket.model';
 import { GetRequestFrame, GetResponseFrame } from './ocpp.action';
 import { CreateError, ErrorCode, GetError } from './ocpp.error';
 import {
-  Action,
   BaseTuple,
   CallType,
   IErrorFrame,
