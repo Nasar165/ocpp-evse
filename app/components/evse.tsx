@@ -16,7 +16,8 @@ import { SendStatusNotification } from '../service/ocpp/command/status-notificat
 import Transaction from './transaction';
 import MeterValue from './meter.value';
 
-const defaultValue = 'ws://localhost:8080/ocpp/JwNpTpPxPm/CHR202305102';
+const defaultValue =
+  'ws://localhost:8180/steve/websocket/CentralSystemService/ch123';
 const connectorId = 1;
 export default function Evse() {
   const [url, setUrl] = useState(defaultValue);

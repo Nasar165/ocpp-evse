@@ -9,10 +9,15 @@ function SendMeterValue(w: IWriter, connectorId: number, value: number): void {
     connectorId,
     meterValue: [
       {
-        context: 'Sample.Periodic',
-        value: value,
-        unit: 'W',
-        measurand: 'Power.Active.Import',
+        timestamp: new Date(),
+        sampledValue: [
+          {
+            context: 'Sample.Periodic',
+            value: value,
+            unit: 'W',
+            measurand: 'Power.Active.Import',
+          },
+        ],
       },
     ],
   };
