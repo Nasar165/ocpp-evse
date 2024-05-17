@@ -28,7 +28,7 @@ class BootNotificationRes implements IBootNotificationRes {
   currentTime: Date = new Date();
 
   @IsNumber()
-  @Min(3600)
+  @Min(180)
   @Max(84000)
   interval = 0;
 
