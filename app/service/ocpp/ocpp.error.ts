@@ -17,7 +17,11 @@ enum ErrorCode {
   GenericError = 'A generic error has occurred',
 }
 
-function CreateError(errCode: ErrorCode, details: ErrorDetails): ErrorTuple {
+function CreateError(
+  errCode: ErrorCode,
+  details: ErrorDetails,
+  uuid?: string
+): ErrorTuple {
   const keyValue = Object.entries(ErrorCode).find((v) => v[1] == errCode);
   let code = '';
 
@@ -29,7 +33,7 @@ function CreateError(errCode: ErrorCode, details: ErrorDetails): ErrorTuple {
     code = keyValue[0];
   }
 
-  return [CallType.CALL_ERROR, v4(), code, errCode, details];
+  return [CallType.CALL_ERROR, uuid ?? v4(), code, errCode, details];
 }
 
 function GetError(payload: ErrorTuple | BaseTuple): IErrorFrame {

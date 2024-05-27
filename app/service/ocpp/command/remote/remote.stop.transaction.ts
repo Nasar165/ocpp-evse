@@ -30,7 +30,13 @@ export function RemoteStopTransactionReq(
     );
 
     if (validation.length > 0) {
-      w.Write(CreateError(ErrorCode.PropertyConstraintViolation, validation));
+      w.Write(
+        CreateError(
+          ErrorCode.PropertyConstraintViolation,
+          validation,
+          frame.uuid
+        )
+      );
       return;
     }
 
@@ -38,9 +44,13 @@ export function RemoteStopTransactionReq(
     const session = GetSession();
     if (session.transactionId != result.transactionId) {
       w.Write(
-        CreateError(ErrorCode.SecurityError, {
-          error: 'transaction id violation',
-        })
+        CreateError(
+          ErrorCode.SecurityError,
+          {
+            error: 'transaction id violation',
+          },
+          frame.uuid
+        )
       );
       return;
     }

@@ -61,15 +61,21 @@ function BootNotification(
   );
 
   if (validation.length > 0) {
-    w.Write(CreateError(ErrorCode.PropertyConstraintViolation, validation));
+    w.Write(
+      CreateError(ErrorCode.PropertyConstraintViolation, validation, frame.uuid)
+    );
     return retry(w);
   }
 
   if (result.status == Status.PENDING) {
     w.Write(
-      CreateError(ErrorCode.NotSupported, {
-        err: 'Pending functionality is not supported',
-      })
+      CreateError(
+        ErrorCode.NotSupported,
+        {
+          err: 'Pending functionality is not supported',
+        },
+        frame.uuid
+      )
     );
 
     return retry(w);

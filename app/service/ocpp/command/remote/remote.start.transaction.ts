@@ -31,7 +31,13 @@ export function RemoteStartTransactionReq(
     );
 
     if (validation.length > 0) {
-      w.Write(CreateError(ErrorCode.PropertyConstraintViolation, validation));
+      w.Write(
+        CreateError(
+          ErrorCode.PropertyConstraintViolation,
+          validation,
+          frame.uuid
+        )
+      );
       return;
     }
 
